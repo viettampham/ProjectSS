@@ -73,8 +73,9 @@ namespace ProjectSS.Services.Impl
             }
             return false;
         }
+        
 
-        public List<UserResponse> getlistUsers()
+        public List<UserResponse> GetlistUsers()
         {
             var listUser = _context.Users.Select(user => new UserResponse
             {

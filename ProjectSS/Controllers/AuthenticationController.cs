@@ -37,11 +37,11 @@ namespace ProjectSS.Controllers
         [HttpGet("Get-list-user")]
         public IActionResult GetListUser()
         {
-            var listUser = _userService.getlistUsers();
+            var listUser = _userService.GetlistUsers();
             return Ok(listUser);
         }
 
-        [HttpDelete("Delete-User")]
+        [HttpDelete("Delete-User{id}")]
         public IActionResult DeleteUser(Guid id)
         {
             var tatgetUser = _userService.DeleteUser(id);

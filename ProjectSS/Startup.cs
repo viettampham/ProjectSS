@@ -42,8 +42,11 @@ namespace ProjectSS
             
             //khai bao scope
             services.AddScoped<IUserService, UserService>();
-            
-            
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IOrderDetailService, OrderdetailService>();
+            services.AddScoped<ICartService, CartService>();
+
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<MasterDbContext>()
                 .AddDefaultTokenProviders();
@@ -126,6 +129,7 @@ namespace ProjectSS
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
+            
             
             app.UseRouting();
 

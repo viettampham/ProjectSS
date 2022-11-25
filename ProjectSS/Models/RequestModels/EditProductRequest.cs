@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using ProjectSS.Models.ViewModels;
 
-namespace ProjectSS.Models
+namespace ProjectSS.Models.RequestModels
 {
-    public class Product
+    public class EditProductRequest
     {
         public Guid id { get; set; }
         public string title { get; set; }
@@ -15,6 +14,6 @@ namespace ProjectSS.Models
         public int price { get; set; }
         public string size { get; set; }
         public string Brand { get; set; }
-        public List<Category> Categories { get; set; }
+        public List<Guid> Categories { get; set; }
     }
 }

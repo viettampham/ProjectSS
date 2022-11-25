@@ -11,7 +11,7 @@ namespace ProjectSS.Services
     {
         Task<LoginResponse> Login(LoginRequest request);
         Task<bool> Registration(RegistrationUser request);
-        List<UserResponse> getlistUsers();
+        List<UserResponse> GetlistUsers();
         UserResponse DeleteUser(Guid id);
 
     }
