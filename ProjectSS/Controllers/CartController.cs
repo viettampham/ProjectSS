@@ -22,7 +22,7 @@ namespace ProjectSS.Controllers
             return Ok(listCart);
         }
 
-        [HttpPost("creare-cart")]
+        [HttpPost("create-cart")]
         public IActionResult CreateCart(CreateCartRequest request)
         {
             var newCart = _cartService.CreateCart(request);

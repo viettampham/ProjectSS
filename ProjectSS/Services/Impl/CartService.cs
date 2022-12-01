@@ -19,11 +19,13 @@ namespace ProjectSS.Services.Impl
         
         public CartResponse CreateCart(CreateCartRequest request)
         {
-            var orderResponse = new List<ListOrderResponse>();
+            /*var orderResponse = new List<ListOrderResponse>();
             var orders = new List<OrderDetail>();
             foreach (var id in request.OrderDetailsId)
             {
-                var targetOrder = _context.OrderDetails.FirstOrDefault(o => o.id == id);
+                var targetOrder = _context.OrderDetails
+                    .Include(o=>o.Product)
+                    .FirstOrDefault(o => o.id == id);
                 if (targetOrder == null)
                 {
                     throw new Exception("this order not exist");
@@ -53,11 +55,60 @@ namespace ProjectSS.Services.Impl
                 id = Guid.NewGuid(),
                 OrderDetails = orders
             };
-            _context.Add(newCart);
+            _context.Carts.Add(newCart);
+            _context.SaveChanges();
             return new CartResponse
             {
                 cartId = newCart.id,
                 OrderDetails = orderResponse
+            };*/
+
+            
+            
+            var orderDetails = new List<OrderDetail>();
+            foreach (var id in request.OrderDetailsId)
+            {
+                var order = _context.OrderDetails
+                    .Include(o=>o.Product)
+                    .FirstOrDefault(o => o.id == id);
+                if (order == null)
+                {
+                    throw new Exception("this order not exist");
+                }
+                orderDetails.Add(order);
+            }
+
+            var orderResponses = new List<ListOrderResponse>();
+            foreach (var order in orderDetails)
+            {
+                var orderResponse = new ListOrderResponse
+                {
+                    id = order.id,
+                    ProductOrder = new ProductOrder
+                    {
+                        title = order.Product.title,
+                        description = order.Product.description,
+                        image_url = order.Product.image_url,
+                        price = order.Product.price,
+                        size = order.Product.size,
+                        Brand = order.Product.Brand
+                    },
+                    Quantity = order.Quantity,
+                    TotalMoney = order.Quantity * order.Product.price
+                };
+                orderResponses.Add(orderResponse);
+            }
+            var newCart = new Cart
+            {
+                id = Guid.NewGuid(), 
+                OrderDetails = orderDetails
+            };
+            _context.Carts.Add(newCart);
+            _context.SaveChanges();
+            return new CartResponse
+            {
+                cartId = newCart.id,
+                OrderDetails = orderResponses
             };
         }
 
@@ -152,43 +203,50 @@ namespace ProjectSS.Services.Impl
 
         public List<CartResponse> GetList()
         {
-            var listCart = _context.Carts.Select(cart => new Cart
-            {
-                id = cart.id,
-                OrderDetails = cart.OrderDetails
-            }).ToList();
-            var listCartResponse = new List<CartResponse>();
-            var lisOrderResponse = new List<ListOrderResponse>();
+            var listCart = _context.Carts
+                .Include(c=>c.OrderDetails)
+                .Select(c => c).ToList();
+            
+            var cartResponses = new List<CartResponse>();
             foreach (var cart in listCart)
             {
-                foreach (var orderTmp in cart.OrderDetails)
+                
+                var orderResponses = new List<ListOrderResponse>();
+                foreach (var order in cart.OrderDetails)
                 {
-                    var orderDetail = new ListOrderResponse
+                    var x = _context.OrderDetails
+                        .Include(o=>o.Product)
+                        .FirstOrDefault(o => o.id == order.id);
+                    if (x == null)
                     {
-                        id = orderTmp.id,
+                        throw new Exception("this order nor exist");
+                    }
+                    var orderResponse = new ListOrderResponse
+                    {
+                        id = x.id,
                         ProductOrder = new ProductOrder
                         {
-                            title = orderTmp.Product.title,
-                            description = orderTmp.Product.description,
-                            image_url = orderTmp.Product.image_url,
-                            price = orderTmp.Product.price,
-                            size = orderTmp.Product.size,
-                            Brand = orderTmp.Product.Brand
+                            title = x.Product.title,
+                            description = x.Product.description,
+                            image_url = x.Product.image_url,
+                            price = x.Product.price,
+                            size = x.Product.size,
+                            Brand = x.Product.Brand
                         },
-                        Quantity = orderTmp.Quantity,
-                        TotalMoney = orderTmp.Product.price * orderTmp.Quantity
+                        Quantity = x.Quantity,
+                        TotalMoney = x.Quantity * x.Product.price
                     };
-                    lisOrderResponse.Add(orderDetail);
+                    orderResponses.Add(orderResponse);
+                    var cartResponse = new CartResponse
+                    {
+                        cartId = cart.id,
+                        OrderDetails = orderResponses
+                    };
+                    cartResponses.Add(cartResponse);
                 }
-
-                var cartResponse = new CartResponse
-                {
-                    cartId = cart.id,
-                    OrderDetails = lisOrderResponse
-                };
-                listCartResponse.Add(cartResponse);
             }
-            return listCartResponse;
+            return cartResponses;
         }
+
     }
 }

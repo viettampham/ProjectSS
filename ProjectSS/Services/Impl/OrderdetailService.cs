@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using ProjectSS.Models;
 using ProjectSS.Models.RequestModels;
 using ProjectSS.Models.ViewModels;
@@ -17,38 +18,23 @@ namespace ProjectSS.Services.Impl
         }
         public List<ListOrderResponse> Getlist()
         {
-            var listOrder = _context.OrderDetails.Select(o => new OrderDetailResponse
+            var listOrder = _context.OrderDetails
+                .Select(order => new ListOrderResponse()
             {
-                id = o.id,
-                Product = o.Product,
-                Quantity = o.Quantity,
-                
-            }).ToList();
-
-            var listOrderResponse = new List<ListOrderResponse>();
-            foreach (var o in listOrder)
-            {
-                var newOrderTemporariry = new ListOrderResponse
+                id = order.id,
+                ProductOrder = new ProductOrder
                 {
-                    id = o.id,
-                    ProductOrder = new ProductOrder
-                    {
-                        title = o.Product.title,
-                        description = o.Product.description,
-                        image_url = o.Product.image_url,
-                        price = o.Product.price,
-                        size = o.Product.size,
-                        Brand = o.Product.Brand
-                    },
-                    Quantity = o.Quantity,
-                    TotalMoney = o.Quantity * o.Product.price
-                };
-                listOrderResponse.Add(newOrderTemporariry);
-            }
-
-           
-            
-            return listOrderResponse;
+                    title = order.Product.title,
+                    description = order.Product.description,
+                    image_url = order.Product.image_url,
+                    price = order.Product.price,
+                    size = order.Product.size,
+                    Brand = order.Product.Brand
+                },
+                Quantity = order.Quantity,
+                TotalMoney = order.Quantity * order.Product.price
+            }).ToList();
+            return listOrder;
         }
 
         public CreateOrderResponse CreateOrder(CreateOrderRequest request)
