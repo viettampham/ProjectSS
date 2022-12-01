@@ -237,13 +237,14 @@ namespace ProjectSS.Services.Impl
                         TotalMoney = x.Quantity * x.Product.price
                     };
                     orderResponses.Add(orderResponse);
-                    var cartResponse = new CartResponse
-                    {
-                        cartId = cart.id,
-                        OrderDetails = orderResponses
-                    };
-                    cartResponses.Add(cartResponse);
+                    
                 }
+                var cartResponse = new CartResponse
+                {
+                    cartId = cart.id,
+                    OrderDetails = orderResponses
+                };
+                cartResponses.Add(cartResponse);
             }
             return cartResponses;
         }
