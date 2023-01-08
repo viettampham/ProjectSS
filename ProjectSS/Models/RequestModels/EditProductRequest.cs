@@ -8,7 +8,6 @@ namespace ProjectSS.Models.RequestModels
         public Guid id { get; set; }
         public string title { get; set; }
         public string description { get; set; }
-        public string image { get; set; }
         public string image_url { get; set; }
         public int quantityAvailable { get; set; }
         public int price { get; set; }

@@ -16,14 +16,15 @@ namespace ProjectSS.Services.Impl
         {
             _context = context;
         }
-        public List<ListOrderResponse> Getlist()
+        public List<OrderDetail> Getlist()
         {
-            var listOrder = _context.OrderDetails
+            /*var listOrder = _context.OrderDetails
                 .Select(order => new ListOrderResponse()
             {
                 id = order.id,
                 ProductOrder = new ProductOrder
                 {
+                    id = order.Product.id,
                     title = order.Product.title,
                     description = order.Product.description,
                     image_url = order.Product.image_url,
@@ -34,6 +35,68 @@ namespace ProjectSS.Services.Impl
                 Quantity = order.Quantity,
                 TotalMoney = order.Quantity * order.Product.price
             }).ToList();
+            for (int i = 0; i < listOrder.Count; i++)
+            {
+                for (int j = 1; j < listOrder.Count; j++)
+                {
+                    if (listOrder[i].ProductOrder.id == listOrder[j].ProductOrder.id)
+                    {
+                        listOrder[i].Quantity = listOrder[i].Quantity + listOrder[j].Quantity;
+                        listOrder.Remove(listOrder[j]);
+                        _context.SaveChanges();
+                    }
+                }
+            }
+            var orders = _context.OrderDetails
+                .Select(order => new ListOrderResponse()
+                {
+                    id = order.id,
+                    ProductOrder = new ProductOrder
+                    {
+                        id = order.Product.id,
+                        title = order.Product.title,
+                        description = order.Product.description,
+                        image_url = order.Product.image_url,
+                        price = order.Product.price,
+                        size = order.Product.size,
+                        Brand = order.Product.Brand
+                    },
+                    Quantity = order.Quantity,
+                    TotalMoney = order.Quantity * order.Product.price
+                }).ToList();
+                */
+            var orderDetails = _context.OrderDetails.Select(order => new OrderDetail
+            {
+                id = order.id,
+                Product = order.Product,
+                Quantity = order.Quantity,
+                TotalMoney = order.Quantity * order.Product.price
+            }).ToList();
+            for (var i = 0; i < orderDetails.Count; i++)
+            {
+                for (int j = i+1 ; j < orderDetails.Count; j++)
+                {
+                    if (orderDetails[i].Product.id == orderDetails[j].Product.id)
+                    {
+                        var targetOrder =
+                            _context.OrderDetails.FirstOrDefault(o => o.id == orderDetails[i].id);
+                        if (targetOrder==null)
+                        {
+                            throw new Exception("not found");
+                        }
+                        targetOrder.Quantity = targetOrder.Quantity + orderDetails[j].Quantity;
+                        _context.Remove(orderDetails[j]);
+                        _context.SaveChanges();
+                    }
+                }
+            }
+            var listOrder = _context.OrderDetails.Select(order => new OrderDetail
+            {
+                id = order.id,
+                Product = order.Product,
+                Quantity = order.Quantity,
+                TotalMoney = order.Quantity * order.Product.price
+            }).ToList();
             return listOrder;
         }
 
@@ -41,6 +104,7 @@ namespace ProjectSS.Services.Impl
         {
             var newOrder = new OrderDetail();
             var product = new Product();
+            
             var p = _context.Products.FirstOrDefault(x => x.id == request.ProductId);
             if (p==null)
             {
@@ -53,6 +117,7 @@ namespace ProjectSS.Services.Impl
 
             var productOrder = new ProductOrder
             {
+                id = product.id,
                 title = product.title,
                 description = product.description,
                 image_url = product.image_url,
@@ -118,9 +183,9 @@ namespace ProjectSS.Services.Impl
             };
         }
 
-        public OrderDetailResponse DeleteOrder(DeleteOrderRequest request)
+        public OrderDetailResponse DeleteOrder(Guid id)
         {
-            var targetOrder = _context.OrderDetails.FirstOrDefault(o => o.id == request.Id);
+            var targetOrder = _context.OrderDetails.FirstOrDefault(o => o.id == id);
             if (targetOrder == null)
             {
                 throw new Exception("this order not exist");

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ProjectSS.Models;
@@ -42,7 +43,6 @@ namespace ProjectSS.Services.Impl
                 id = Guid.NewGuid(),
                 title = request.title,
                 description = request.description,
-                image = request.image,
                 image_url = request.image_url,
                 quantityAvailable = request.quantityAvailable,
                 price = request.price,
@@ -104,7 +104,6 @@ namespace ProjectSS.Services.Impl
 
             targetProduct.title = request.title;
             targetProduct.description = request.description;
-            targetProduct.image = request.image;
             targetProduct.image_url = request.image_url;
             targetProduct.quantityAvailable = request.quantityAvailable;
             targetProduct.price = request.price;
@@ -130,9 +129,9 @@ namespace ProjectSS.Services.Impl
             };
         }
 
-        public ProductResponse DeleteProduct(DeleteProductRequest request)
+        public ProductResponse DeleteProduct(Guid id)
         {
-            var targetProduct = _context.Products.FirstOrDefault(p => p.id == request.Id);
+            var targetProduct = _context.Products.FirstOrDefault(p => p.id == id);
             if (targetProduct == null)
             {
                 throw new Exception("This product not exist");
@@ -199,6 +198,65 @@ namespace ProjectSS.Services.Impl
                 products.Add(productTemporariry);
             }
             return products;
+        }
+
+        public List<string> GetBrand()
+        {
+            var ListBrand = new List<string>();
+            var listProduct = _context.Products.Select(product => new ProductResponse
+            {
+                Id = product.id,
+                Title = product.title,
+                image_url = product.image_url,
+                QuantityaVailable = product.quantityAvailable,
+                Price = product.price,
+                Description = product.description,
+                Size = product.size,
+                Brand = product.Brand,
+                Categorys = product.Categories
+            }).ToList();
+
+            foreach (var product in listProduct)
+            {
+                ListBrand.Add(product.Brand);
+            }
+
+            for (int i = 0; i < ListBrand.Count; i++)
+            {
+                for (int j = i+1 ; j < ListBrand.Count; j++)
+                {
+                    if (ListBrand[i] == ListBrand[j])
+                    {
+                        ListBrand.Remove(ListBrand[i]);
+                    }
+                }
+            }
+            return ListBrand;
+        }
+
+        public ProductResponse GetProductById(Guid id)
+        {
+            var productResponse = new ProductResponse();
+            var targetproduct = _context.Products.FirstOrDefault(p => p.id == id);
+            if (targetproduct == null)
+            {
+                throw new Exception("not found");
+            }
+
+            productResponse = new ProductResponse()
+            {
+                Id = targetproduct.id,
+                Title = targetproduct.title,
+                Description = targetproduct.description,
+                image = targetproduct.image,
+                image_url = targetproduct.image_url,
+                Size = targetproduct.size,
+                Price = targetproduct.price,
+                QuantityaVailable = targetproduct.quantityAvailable,
+                Brand = targetproduct.Brand,
+                Categorys = targetproduct.Categories
+            };
+            return productResponse;
         }
     }
 }

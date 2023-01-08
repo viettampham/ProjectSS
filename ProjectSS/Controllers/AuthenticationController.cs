@@ -11,7 +11,7 @@ namespace ProjectSS.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class AuthenticationController:ControllerBase
+    public class AuthenticationController : ControllerBase
     {
         private readonly IUserService _userService;
 
@@ -22,8 +22,8 @@ namespace ProjectSS.Controllers
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
-        { 
-            var response =await _userService.Login(request);
+        {
+            var response = await _userService.Login(request);
             return Ok(response);
         }
 
@@ -39,6 +39,13 @@ namespace ProjectSS.Controllers
         {
             var listUser = _userService.GetlistUsers();
             return Ok(listUser);
+        }
+
+        [HttpPost("Edit-user")]
+        public IActionResult EditUser(EditUserRequest request)
+        {
+            var targetUser = _userService.EditUser(request);
+            return Ok(targetUser);
         }
 
         [HttpDelete("Delete-User{id}")]

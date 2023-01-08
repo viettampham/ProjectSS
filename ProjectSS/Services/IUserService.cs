@@ -13,6 +13,7 @@ namespace ProjectSS.Services
         Task<bool> Registration(RegistrationUser request);
         List<UserResponse> GetlistUsers();
         UserResponse DeleteUser(Guid id);
+        UserResponse EditUser(EditUserRequest request);
 
     }
 }

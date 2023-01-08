@@ -36,7 +36,7 @@ namespace ProjectSS.Controllers
             return Ok(targetCart);
         }
         
-        [HttpDelete("delete-cart")]
+        [HttpDelete("delete-cart/{id}")]
         public IActionResult DeleteCart(DeleteCartRequest request)
         {
             var targetCart = _cartService.DeleteCart(request);

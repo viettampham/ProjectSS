@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using ProjectSS.Models.RequestModels;
 using ProjectSS.Services;
 
@@ -36,10 +37,10 @@ namespace ProjectSS.Controllers
             return Ok(targetOrer);
         }
 
-        [HttpDelete("delete-order")]
-        public IActionResult DeleteOrder(DeleteOrderRequest request)
+        [HttpDelete("delete-order/{id}")]
+        public IActionResult DeleteOrder(Guid id)
         {
-            var targetOrder = _orderDetailService.DeleteOrder(request);
+            var targetOrder = _orderDetailService.DeleteOrder(id);
             return Ok(targetOrder);
         }
     }

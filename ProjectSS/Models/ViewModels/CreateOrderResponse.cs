@@ -15,6 +15,7 @@ namespace ProjectSS.Models.ViewModels
     
     public class ProductOrder
     {
+        public Guid id { get; set; }
         public string title { get; set; }
         public string description { get; set; }
         public string image_url { get; set; }

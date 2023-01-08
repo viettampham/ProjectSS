@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using ProjectSS.Models;
 using ProjectSS.Models.RequestModels;
 using ProjectSS.Models.ViewModels;
 
@@ -8,7 +10,9 @@ namespace ProjectSS.Services
     {
         ProductResponse CreateProduct(CreateProductRequest request);
         ProductResponse EditProduct(EditProductRequest request);
-        ProductResponse DeleteProduct(DeleteProductRequest request);
+        ProductResponse DeleteProduct(Guid id);
         List<GetListProductResponse> GetListProduct();
+        List<string> GetBrand();
+        ProductResponse GetProductById(Guid id);
     }
 }

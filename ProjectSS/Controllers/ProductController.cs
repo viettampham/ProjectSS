@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using ProjectSS.Models.RequestModels;
 using ProjectSS.Services;
 
@@ -28,10 +29,10 @@ namespace ProjectSS.Controllers
             return Ok(targetProduct);
         }
 
-        [HttpDelete("Delete-product/{id}")]
-        public IActionResult DeleteProduct(DeleteProductRequest request)
+        [HttpDelete("Delete-product{id}")]
+        public IActionResult DeleteProduct(Guid id)
         {
-            var targetProduct = _productService.DeleteProduct(request);
+            var targetProduct = _productService.DeleteProduct(id);
             return Ok(targetProduct);
         }
 
@@ -40,6 +41,20 @@ namespace ProjectSS.Controllers
         {
             var listProduct = _productService.GetListProduct();
             return Ok(listProduct);
+        }
+
+        [HttpGet("get-list-brand")]
+        public IActionResult GetListBrand()
+        {
+            var listBrand = _productService.GetBrand();
+            return Ok(listBrand);
+        }
+
+        [HttpGet("get-product-by-id/{id}")]
+        public IActionResult GetProductById(Guid id)
+        {
+            var productResponse = _productService.GetProductById(id);
+            return Ok(productResponse);
         }
 
     }

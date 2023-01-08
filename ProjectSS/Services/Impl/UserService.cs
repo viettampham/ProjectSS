@@ -21,6 +21,7 @@ namespace ProjectSS.Services.Impl
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly MasterDbContext _context;
+        private IUserService _userServiceImplementation;
 
         public UserService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IConfiguration configuration, MasterDbContext context)
         {
@@ -98,6 +99,27 @@ namespace ProjectSS.Services.Impl
             _context.Remove(targetUser);
             _context.SaveChanges();
             return new UserResponse
+            {
+                id = targetUser.Id,
+                UserName = targetUser.UserName,
+                Name = targetUser.Name,
+                Address = targetUser.Address
+            };
+        }
+
+        public UserResponse EditUser(EditUserRequest request)
+        {
+            var targetUser = _context.AspNetUsers.FirstOrDefault(user => user.Id == request.id);
+            if (targetUser == null)
+            {
+                throw new Exception("not found this user");
+            }
+
+            targetUser.UserName = request.UserName;
+            targetUser.Name = request.Name;
+            targetUser.Address = request.Address;
+            _context.SaveChanges();
+            return new UserResponse()
             {
                 id = targetUser.Id,
                 UserName = targetUser.UserName,

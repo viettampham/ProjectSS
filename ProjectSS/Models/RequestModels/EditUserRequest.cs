@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace ProjectSS.Models.ViewModels
+namespace ProjectSS.Models.RequestModels
 {
-    public class UserResponse
+    public class EditUserRequest
     {
         public Guid id { get; set; }
         public string UserName { get; set; }
