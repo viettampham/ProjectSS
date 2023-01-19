@@ -6,13 +6,9 @@ namespace ProjectSS.Models.ViewModels
     public class OrderDetailResponse
     {
         public Guid id { get; set; }
+        public Guid UserID { get; set; }
         public Product Product { get; set; }
         public int Quantity { get; set; }
-        
-        
-        /*public string SizeOrder { get; set; }
-        public string BrandOrder { get; set; }
-        public string CategoryOrder { get; set; }*/
     }
     
     public class EditOrderResponse

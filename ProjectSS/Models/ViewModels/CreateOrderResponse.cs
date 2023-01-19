@@ -5,6 +5,7 @@ namespace ProjectSS.Models.ViewModels
     public class CreateOrderResponse
     {
         public Guid id { get; set; }
+        public Guid UserID { get; set; }
         public ProductOrder Product { get; set; }
         public int Quantity { get; set; }
         public int TotalMoneyOrder { get; set; }

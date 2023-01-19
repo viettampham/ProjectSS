@@ -46,6 +46,7 @@ namespace ProjectSS
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IOrderDetailService, OrderdetailService>();
             services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IBillService, BillService>();
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<MasterDbContext>()

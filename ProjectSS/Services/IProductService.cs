@@ -14,5 +14,8 @@ namespace ProjectSS.Services
         List<GetListProductResponse> GetListProduct();
         List<string> GetBrand();
         ProductResponse GetProductById(Guid id);
+        List<ProductResponse> GetListProductByCategory(Guid id);
+        List<ProductResponse> GetproductByBrand(string brand);
+        List<ProductResponse> SearchProduct(string request);
     }
 }

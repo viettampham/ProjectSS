@@ -57,5 +57,25 @@ namespace ProjectSS.Controllers
             return Ok(productResponse);
         }
 
+        [HttpGet("get-prouct-by-category/{id}")]
+        public IActionResult GetProductByCategory(Guid id)
+        {
+            var Products = _productService.GetListProductByCategory(id);
+            return Ok(Products);
+        }
+
+        [HttpGet("get-product-by-brand/{brand}")]
+        public IActionResult GetProductByBrand(string brand)
+        {
+            var Products = _productService.GetproductByBrand(brand);
+            return Ok(Products);
+        }
+
+        [HttpGet("search-product/{request}")]
+        public IActionResult SearchProduct(string request)
+        {
+            var listProduct = _productService.SearchProduct(request);
+            return Ok(listProduct);
+        }
     }
 }

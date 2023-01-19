@@ -98,9 +98,9 @@ namespace ProjectSS.Services.Impl
             };
         }
 
-        public CategoryResponse DeleteCategory(DeleteCategoryRequest request)
+        public CategoryResponse DeleteCategory(Guid id)
         {
-            var targetCategory = _context.Categories.FirstOrDefault(c => c.id == request.Id);
+            var targetCategory = _context.Categories.FirstOrDefault(c => c.id == id);
             if (targetCategory == null)
             {
                 throw new Exception("This category not exist");
@@ -122,9 +122,27 @@ namespace ProjectSS.Services.Impl
                 Id = c.id,
                 Title = c.title,
                 Products = c.Products
-
             }).ToList();
             return listCategory;
+        }
+
+        public CategoryResponse GetCategoryById(Guid id)
+        {
+            var targetCategory = new CategoryResponse();
+            var listCategory = _context.Categories.Select(c => new CategoryResponse
+            {
+                Id = c.id,
+                Title = c.title,
+                Products = c.Products
+            }).ToList();
+            foreach (var c in listCategory)
+            {
+                if (c.Id == id)
+                {
+                    targetCategory = c;
+                }
+            }
+            return targetCategory;
         }
     }
 }

@@ -18,56 +18,10 @@ namespace ProjectSS.Services.Impl
         }
         public List<OrderDetail> Getlist()
         {
-            /*var listOrder = _context.OrderDetails
-                .Select(order => new ListOrderResponse()
-            {
-                id = order.id,
-                ProductOrder = new ProductOrder
-                {
-                    id = order.Product.id,
-                    title = order.Product.title,
-                    description = order.Product.description,
-                    image_url = order.Product.image_url,
-                    price = order.Product.price,
-                    size = order.Product.size,
-                    Brand = order.Product.Brand
-                },
-                Quantity = order.Quantity,
-                TotalMoney = order.Quantity * order.Product.price
-            }).ToList();
-            for (int i = 0; i < listOrder.Count; i++)
-            {
-                for (int j = 1; j < listOrder.Count; j++)
-                {
-                    if (listOrder[i].ProductOrder.id == listOrder[j].ProductOrder.id)
-                    {
-                        listOrder[i].Quantity = listOrder[i].Quantity + listOrder[j].Quantity;
-                        listOrder.Remove(listOrder[j]);
-                        _context.SaveChanges();
-                    }
-                }
-            }
-            var orders = _context.OrderDetails
-                .Select(order => new ListOrderResponse()
-                {
-                    id = order.id,
-                    ProductOrder = new ProductOrder
-                    {
-                        id = order.Product.id,
-                        title = order.Product.title,
-                        description = order.Product.description,
-                        image_url = order.Product.image_url,
-                        price = order.Product.price,
-                        size = order.Product.size,
-                        Brand = order.Product.Brand
-                    },
-                    Quantity = order.Quantity,
-                    TotalMoney = order.Quantity * order.Product.price
-                }).ToList();
-                */
             var orderDetails = _context.OrderDetails.Select(order => new OrderDetail
             {
                 id = order.id,
+                UserID = order.UserID,
                 Product = order.Product,
                 Quantity = order.Quantity,
                 TotalMoney = order.Quantity * order.Product.price
@@ -76,7 +30,7 @@ namespace ProjectSS.Services.Impl
             {
                 for (int j = i+1 ; j < orderDetails.Count; j++)
                 {
-                    if (orderDetails[i].Product.id == orderDetails[j].Product.id)
+                    if (orderDetails[i].Product.id == orderDetails[j].Product.id && orderDetails[i].UserID == orderDetails[j].UserID)
                     {
                         var targetOrder =
                             _context.OrderDetails.FirstOrDefault(o => o.id == orderDetails[i].id);
@@ -93,6 +47,7 @@ namespace ProjectSS.Services.Impl
             var listOrder = _context.OrderDetails.Select(order => new OrderDetail
             {
                 id = order.id,
+                UserID = order.UserID,
                 Product = order.Product,
                 Quantity = order.Quantity,
                 TotalMoney = order.Quantity * order.Product.price
@@ -102,6 +57,10 @@ namespace ProjectSS.Services.Impl
 
         public CreateOrderResponse CreateOrder(CreateOrderRequest request)
         {
+            if (request.UserID == null)
+            {
+                throw new Exception("you are not login");
+            }
             var newOrder = new OrderDetail();
             var product = new Product();
             
@@ -126,6 +85,7 @@ namespace ProjectSS.Services.Impl
                 Brand = product.Brand
             };
             newOrder.id = Guid.NewGuid();
+            newOrder.UserID = request.UserID;
             newOrder.Product = product;
             newOrder.Quantity = request.Quantity;
             
@@ -134,10 +94,11 @@ namespace ProjectSS.Services.Impl
             _context.SaveChanges();
             return new CreateOrderResponse()
             {
-                id = Guid.NewGuid(),
+                id = newOrder.id,
+                UserID = newOrder.UserID,
                 Product = productOrder,
-                Quantity = request.Quantity,
-                TotalMoneyOrder = request.Quantity * productOrder.price
+                Quantity = newOrder.Quantity,
+                TotalMoneyOrder = newOrder.Quantity * productOrder.price
             };
         }
 

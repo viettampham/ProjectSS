@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using ProjectSS.Models.RequestModels;
 using ProjectSS.Services;
 
@@ -32,9 +33,9 @@ namespace ProjectSS.Controllers
         }
 
         [HttpDelete("Delete-category/{id}")]
-        public IActionResult DeleteCategory(DeleteCategoryRequest request)
+        public IActionResult DeleteCategory(Guid id)
         {
-            var targetCategory = _categoryService.DeleteCategory(request);
+            var targetCategory = _categoryService.DeleteCategory(id);
             return Ok(targetCategory);
         }
         
@@ -43,5 +44,13 @@ namespace ProjectSS.Controllers
         {
             var listCategory = _categoryService.GetlistCategory();
             return Ok(listCategory);
-        }    }
+        }
+
+        [HttpGet("get-category-by-id/{id}")]
+        public IActionResult GetCategoryById(Guid id)
+        {
+            var targetCategory = _categoryService.GetCategoryById(id);
+            return Ok(targetCategory);
+        }
+    }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using ProjectSS.Models.RequestModels;
 using ProjectSS.Services;
 
@@ -37,11 +38,17 @@ namespace ProjectSS.Controllers
         }
         
         [HttpDelete("delete-cart/{id}")]
-        public IActionResult DeleteCart(DeleteCartRequest request)
+        public IActionResult DeleteCart(Guid id)
         {
-            var targetCart = _cartService.DeleteCart(request);
+            var targetCart = _cartService.DeleteCart(id);
             return Ok(targetCart);
         }
-        
+
+        [HttpGet("get-cart-by-id/{id}")]
+        public IActionResult GetUserCart(Guid id)
+        {
+            var targetCart = _cartService.GetCartByUser(id);
+            return Ok(targetCart);
+        }
     }
 }

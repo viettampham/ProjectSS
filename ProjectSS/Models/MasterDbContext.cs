@@ -12,6 +12,7 @@ namespace ProjectSS.Models
         public DbSet<Category> Categories { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Cart> Carts { get; set; }
+        public DbSet<Bill> Bills { get; set; }
         
         public MasterDbContext(DbContextOptions<MasterDbContext> options) : base(options)
         {

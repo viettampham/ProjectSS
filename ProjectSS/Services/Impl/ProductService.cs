@@ -258,5 +258,99 @@ namespace ProjectSS.Services.Impl
             };
             return productResponse;
         }
+
+        public List<ProductResponse> GetListProductByCategory(Guid id)
+        {
+            var Products = new List<ProductResponse>();
+            var targetCategory = new CategoryResponse();
+            var listCategory = _context.Categories.Select(c => new CategoryResponse
+            {
+                Id = c.id,
+                Title = c.title,
+                Products = c.Products
+            }).ToList();
+            foreach (var c in listCategory)
+            {
+                if (c.Id == id)
+                {
+                    targetCategory = c;
+                }
+            }
+            if (targetCategory == null)
+            {
+                throw new Exception("Error");
+            }
+            
+            foreach (var p in targetCategory.Products)
+            {
+                var ProductResponse = new ProductResponse()
+                {
+                    Id = p.id,
+                    Title = p.title,
+                    Description = p.description,
+                    image = p.image,
+                    image_url = p.image_url,
+                    Size = p.size,
+                    Price = p.price,
+                    QuantityaVailable = p.quantityAvailable,
+                    Brand = p.Brand,
+                };
+                Products.Add(ProductResponse);
+            }
+            return Products;
+        }
+
+        public List<ProductResponse> GetproductByBrand(string brand)
+        {
+            var Products = new List<ProductResponse>();
+            var listProduct = _context.Products.Select(product => new ProductResponse
+            {
+                Id = product.id,
+                Title = product.title,
+                image_url = product.image_url,
+                QuantityaVailable = product.quantityAvailable,
+                Price = product.price,
+                Description = product.description,
+                Size = product.size,
+                Brand = product.Brand,
+                Categorys = product.Categories
+            }).ToList();
+            foreach (var p in listProduct)
+            {
+                if (p.Brand == brand)
+                {
+                    Products.Add(p);
+                }
+            }
+            return Products;
+        }
+
+        public List<ProductResponse> SearchProduct(string request)
+        {
+            var Products = new List<ProductResponse>();
+            var listProduct = _context.Products.Where(p => p.title.ToLower().Contains(request.ToLower()) || p.Brand.ToLower().Contains(request.ToLower())).ToList();
+            if (listProduct == null)
+            {
+                throw new Exception("not found");
+            }
+            foreach (var product in listProduct)
+            {
+                var productResponse = new ProductResponse()
+                {
+                    Id = product.id,
+                    Title = product.title,
+                    Description = product.description,
+                    image = product.image,
+                    image_url = product.image_url,
+                    Size = product.size,
+                    Price = product.price,
+                    QuantityaVailable = product.quantityAvailable,
+                    Brand = product.Brand,
+                    Categorys = product.Categories
+                };
+                Products.Add(productResponse);
+            }
+            return Products;
+        }
     }
 }
