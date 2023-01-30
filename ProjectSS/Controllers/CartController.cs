@@ -24,9 +24,9 @@ namespace ProjectSS.Controllers
         }
 
         [HttpPost("create-cart")]
-        public IActionResult CreateCart(CreateCartRequest request)
+        public IActionResult CreateCart(Guid id)
         {
-            var newCart = _cartService.CreateCart(request);
+            var newCart = _cartService.CreateCart(id);
             return Ok(newCart);
         }
         

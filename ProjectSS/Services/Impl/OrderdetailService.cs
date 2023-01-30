@@ -162,5 +162,37 @@ namespace ProjectSS.Services.Impl
                 
             };
         }
+
+        public List<OrderDetailResponse> GetOrderByUserID(Guid id)
+        {
+            Getlist();
+            var orderResponses = new List<OrderDetailResponse>();
+            var listOrder = _context.OrderDetails.Include(o => o.Product)
+                .Select(o => new OrderDetail()
+                {
+                    id = o.id,
+                    UserID = o.UserID,
+                    Product = o.Product,
+                    Quantity = o.Quantity,
+                    TotalMoney = o.TotalMoney,
+                }).ToList();
+            
+            listOrder.ForEach(order =>
+            {
+                if (order.UserID == id)
+                {
+                    var orderResponse = new OrderDetailResponse()
+                    {
+                        id = order.id,
+                        UserID = order.UserID,
+                        Product = order.Product,
+                        Quantity = order.Quantity,
+                        TotalMoney = order.Product.price * order.Quantity
+                    };
+                    orderResponses.Add(orderResponse);
+                }
+            });
+            return orderResponses;
+        }
     }
 }

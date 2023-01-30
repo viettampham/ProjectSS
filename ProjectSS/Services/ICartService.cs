@@ -8,10 +8,10 @@ namespace ProjectSS.Services
 {
     public interface ICartService
     {
-        CartResponse CreateCart(CreateCartRequest request);
+        CartResponse CreateCart(Guid id);
         CartResponse EditCart(EditCartRequest request);
         Cart DeleteCart(Guid id);
-        List<CartResponse> GetList();
+        List<Cart> GetList();
         CartResponse GetCartByUser(Guid id);
     }
 }

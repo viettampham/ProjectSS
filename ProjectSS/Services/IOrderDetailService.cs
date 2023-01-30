@@ -12,6 +12,7 @@ namespace ProjectSS.Services
         CreateOrderResponse CreateOrder(CreateOrderRequest request);
         EditOrderResponse EditOrder(EditOrderRequest request);
         OrderDetailResponse DeleteOrder(Guid id);
+        List<OrderDetailResponse> GetOrderByUserID(Guid id);
 
     }
 }

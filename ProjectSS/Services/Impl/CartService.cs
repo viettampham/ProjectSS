@@ -19,9 +19,9 @@ namespace ProjectSS.Services.Impl
         
         
         
-        public CartResponse CreateCart(CreateCartRequest request)
+        public CartResponse CreateCart(Guid id)
         {
-            var orderDetails = new List<OrderDetail>();
+            /*var orderDetails = new List<OrderDetail>();
             foreach (var id in request.OrderDetailsId)
             {
                 var order = _context.OrderDetails
@@ -43,6 +43,7 @@ namespace ProjectSS.Services.Impl
                     id = order.id,
                     ProductOrder = new ProductOrder
                     {
+                        id = order.Product.id,
                         title = order.Product.title,
                         description = order.Product.description,
                         image_url = order.Product.image_url,
@@ -71,7 +72,68 @@ namespace ProjectSS.Services.Impl
                 UserID = newCart.UserId,
                 OrderDetails = orderResponses,
                 TotalCart = newCart.TotalCart
+            };*/
+            var listOrderDetails = new List<OrderDetail>();
+            var listOrder = _context.OrderDetails
+                .Include(o => o.Product)
+                .Select(o => new OrderDetail()
+                {
+                    id = o.id,
+                    UserID = o.UserID,
+                    Product = o.Product,
+                    Quantity = o.Quantity,
+                    TotalMoney = o.TotalMoney
+                }).ToList();
+            int TotalCart = 0;
+            foreach (var order in listOrder)
+            {
+                if (order.UserID == id)
+                {
+                    listOrderDetails.Add(order);
+                    TotalCart = TotalCart + order.TotalMoney;
+                }
+            }
+            var newCart = new Cart()
+            {
+                id = Guid.NewGuid(),
+                UserId = id,
+                OrderDetails = listOrderDetails,
+                TotalCart = TotalCart
             };
+            _context.Add(newCart);
+            _context.SaveChanges();
+
+            var orderResponses = new List<ListOrderResponse>();
+            foreach (var order in newCart.OrderDetails)
+            {
+                var orderResponse = new ListOrderResponse()
+                {
+                    id = order.id,
+                    ProductOrder = new ProductOrder()
+                    {
+                        id = order.Product.id,
+                        title = order.Product.title,
+                        description = order.Product.description,
+                        image_url = order.Product.image_url,
+                        price = order.Product.price,
+                        size = order.Product.size,
+                        Brand = order.Product.Brand
+                    },
+                    Quantity = order.Quantity,
+                    TotalMoney = order.Product.price * order.Quantity
+                };
+                orderResponses.Add(orderResponse);
+            }
+            
+            var CartResponse = new CartResponse()
+            {
+                cartId = newCart.id,
+                UserID = newCart.UserId,
+                OrderDetails = orderResponses,
+                TotalCart = newCart.TotalCart
+            };
+
+            return CartResponse;
         }
 
         public CartResponse EditCart(EditCartRequest request)
@@ -137,54 +199,28 @@ namespace ProjectSS.Services.Impl
             return targetCart;
         }
 
-        public List<CartResponse> GetList()
+        public List<Cart> GetList()
         {
             var listCart = _context.Carts
                 .Include(c=>c.OrderDetails)
-                .Select(c => c).ToList();
-            
-            var cartResponses = new List<CartResponse>();
+                .Select(c => new Cart()
+            {
+                id = c.id,
+                UserId = c.UserId,
+                OrderDetails = c.OrderDetails,
+                TotalCart = c.TotalCart
+            }).ToList();
             foreach (var cart in listCart)
             {
-                var orderResponses = new List<ListOrderResponse>();
                 foreach (var order in cart.OrderDetails)
                 {
-                    var x = _context.OrderDetails
-                        .Include(o=>o.Product)
+                    var targetOrder = _context.OrderDetails
+                        .Include(o => o.Product)
                         .FirstOrDefault(o => o.id == order.id);
-                    if (x == null)
-                    {
-                        throw new Exception("this order not exist");
-                    }
-                    var orderResponse = new ListOrderResponse
-                    {
-                        id = x.id,
-                        ProductOrder = new ProductOrder
-                        {
-                            id = x.Product.id,
-                            title = x.Product.title,
-                            description = x.Product.description,
-                            image_url = x.Product.image_url,
-                            price = x.Product.price,
-                            size = x.Product.size,
-                            Brand = x.Product.Brand
-                        },
-                        Quantity = x.Quantity,
-                        TotalMoney = x.Quantity * x.Product.price
-                    };
-                    orderResponses.Add(orderResponse);
+                    order.Product = targetOrder.Product;
                 }
-                var cartResponse = new CartResponse
-                {
-                    cartId = cart.id,
-                    UserID = cart.UserId,
-                    OrderDetails = orderResponses,
-                    TotalCart = cart.TotalCart
-                };
-                cartResponses.Add(cartResponse);
             }
-
-            return cartResponses;
+            return listCart;
         }
 
         public CartResponse GetCartByUser(Guid id)
@@ -223,5 +259,6 @@ namespace ProjectSS.Services.Impl
                 TotalCart = targetCart.TotalCart
             };
         }
+        
     }
 }

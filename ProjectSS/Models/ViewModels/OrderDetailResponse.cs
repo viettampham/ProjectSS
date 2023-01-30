@@ -9,6 +9,7 @@ namespace ProjectSS.Models.ViewModels
         public Guid UserID { get; set; }
         public Product Product { get; set; }
         public int Quantity { get; set; }
+        public int TotalMoney  { get; set; }
     }
     
     public class EditOrderResponse

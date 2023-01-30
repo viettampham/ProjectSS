@@ -43,5 +43,12 @@ namespace ProjectSS.Controllers
             var targetOrder = _orderDetailService.DeleteOrder(id);
             return Ok(targetOrder);
         }
+
+        [HttpGet("get-order-by-userid/{id}")]
+        public IActionResult GetOrderByUserID(Guid id)
+        {
+            var orderReponses = _orderDetailService.GetOrderByUserID(id);
+            return Ok(orderReponses);
+        }
     }
 }

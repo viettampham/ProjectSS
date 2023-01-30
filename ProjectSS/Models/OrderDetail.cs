@@ -11,6 +11,7 @@ namespace ProjectSS.Models
         public int Quantity { get; set; }
         public int TotalMoney { get; set; }
         public List<Cart> Carts { get; set; }
+        public Bill Bill { get; set; }
     
     }
 }

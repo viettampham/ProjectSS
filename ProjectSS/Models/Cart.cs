@@ -10,7 +10,5 @@ namespace ProjectSS.Models
         public Guid UserId { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
         public int TotalCart { get; set; }
-
-        public Bill Bill { get; set; }
     }
 }
